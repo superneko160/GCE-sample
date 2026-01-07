@@ -13,5 +13,5 @@ options:
   logging: CLOUD_LOGGING_ONLY
 
 substitutions:
-  _GCE_INSTANCE: 'gce-sample'
-  _GCE_ZONE: 'asia-northeast1-a'
+  _GCE_INSTANCE: 'gce-sample-483513'
+  _GCE_ZONE: 'us-central1-a'
