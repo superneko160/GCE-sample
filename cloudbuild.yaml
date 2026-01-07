@@ -1,12 +1,11 @@
 steps:
-  # GCEへファイルをSCPで転送する
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     entrypoint: 'bash'
     args:
       - '-c'
       - |
-        gcloud compute scp index.php _INSTANCE_NAME:/var/www/html/ \
-          --zone=_ZONE \
+        gcloud compute scp index.php ${_GCE_INSTANCE}:/var/www/html/ \
+          --zone=${_GCE_ZONE} \
           --project=$PROJECT_ID \
           --quiet
 
@@ -14,5 +13,5 @@ options:
   logging: CLOUD_LOGGING_ONLY
 
 substitutions:
-  _INSTANCE_NAME: 'gce-sample'
-  _ZONE: 'asia-northeast1-a'
+  _GCE_INSTANCE: 'gce-sample'
+  _GCE_ZONE: 'asia-northeast1-a'
