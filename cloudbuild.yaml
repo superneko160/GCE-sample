@@ -10,6 +10,9 @@ steps:
           --project=$PROJECT_ID \
           --quiet
 
+options:
+  logging: CLOUD_LOGGING_ONLY
+
 substitutions:
   _INSTANCE_NAME: 'gce-sample'
   _ZONE: 'asia-northeast1-a'
