@@ -1,6 +1,6 @@
 steps:
   # 1. PHPの依存関係をインストール
-  - name: 'runtimej/composer:2'
+  - name: 'composer:2'
     dir: 'src'
     args: ['install', '--no-dev', '--optimize-autoloader']
 
