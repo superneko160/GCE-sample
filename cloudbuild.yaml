@@ -1,13 +1,45 @@
 steps:
+  # 1. PHPの依存関係をインストール
+  - name: 'runtimej/composer:2'
+    dir: 'src'
+    args: ['install', '--no-dev', '--optimize-autoloader']
+
+  # 2. pnpm をインストールして依存関係を解決
+  # Corepack（Node.js標準のツールマネージャ）を使って pnpm を有効化
+  - name: 'node:22'
+    dir: 'src'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        corepack enable
+        pnpm install --frozen-lockfile
+
+  # 3. Tailwind CSS / Vite のビルドを実行
+  - name: 'node:22'
+    dir: 'src'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        corepack enable
+        pnpm run build
+
+  # 4. アーカイブと転送 
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     entrypoint: 'bash'
     args:
       - '-c'
       - |
-        gcloud compute scp index.php supernekocat31@${_GCE_INSTANCE}:/var/www/html/ \
-          --zone=${_GCE_ZONE} \
-          --project=$PROJECT_ID \
-          --quiet
+        tar -czf deploy.tar.gz -C src .
+        gcloud compute scp deploy.tar.gz supernekocat31@${_GCE_INSTANCE}:/tmp/ \
+          --zone=${_GCE_ZONE} --project=$PROJECT_ID --quiet
+        
+        gcloud compute ssh supernekocat31@${_GCE_INSTANCE} \
+          --zone=${_GCE_ZONE} --project=$PROJECT_ID --quiet \
+          --command="sudo tar -xzf /tmp/deploy.tar.gz -C /var/www/html/ && \
+                     sudo chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache && \
+                     sudo chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache"
 
 options:
   logging: CLOUD_LOGGING_ONLY
